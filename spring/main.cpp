@@ -4,6 +4,7 @@
 
 using namespace std;
 
+
 //Called when a key is pressed
 void handleKeypress(unsigned char key, //The key that was pressed
 	int x, int y) {    //The current mouse coordinates
@@ -29,6 +30,49 @@ void handleResize(int w, int h) {
 	glLoadIdentity(); //Reset the camera
 	gluPerspective(45.0, (double)w / (double)h, 1.0, 200.0);
 }
+
+void drawBox(GLfloat w, GLfloat h, GLfloat d)
+{
+	glTranslatef(0.0f, 10.0f, -30.0f);
+	glBegin(GL_QUADS);									// Draw A Quad
+	glColor3f(0.0f, 1.0f, 0.0f);						// Set The Color To Blue
+	glVertex3f(1.0f, 1.0f, -1.0f);					// Top Right Of The Quad (Top)
+	glVertex3f(-1.0f, 1.0f, -1.0f);					// Top Left Of The Quad (Top)
+	glVertex3f(-1.0f, 1.0f, 1.0f);					// Bottom Left Of The Quad (Top)
+	glVertex3f(1.0f, 1.0f, 1.0f);					// Bottom Right Of The Quad (Top)
+
+	glColor3f(1.0f, 0.5f, 0.0f);						// Set The Color To Orange
+	glVertex3f(1.0f, -1.0f, 1.0f);					// Top Right Of The Quad (Bottom)
+	glVertex3f(-1.0f, -1.0f, 1.0f);					// Top Left Of The Quad (Bottom)
+	glVertex3f(-1.0f, -1.0f, -1.0f);					// Bottom Left Of The Quad (Bottom)
+	glVertex3f(1.0f, -1.0f, -1.0f);					// Bottom Right Of The Quad (Bottom)
+
+	glColor3f(1.0f, 0.0f, 0.0f);						// Set The Color To Red
+	glVertex3f(1.0f, 1.0f, 1.0f);					// Top Right Of The Quad (Front)
+	glVertex3f(-1.0f, 1.0f, 1.0f);					// Top Left Of The Quad (Front)
+	glVertex3f(-1.0f, -1.0f, 1.0f);					// Bottom Left Of The Quad (Front)
+	glVertex3f(1.0f, -1.0f, 1.0f);					// Bottom Right Of The Quad (Front)
+
+	glColor3f(1.0f, 1.0f, 0.0f);						// Set The Color To Yellow
+	glVertex3f(1.0f, -1.0f, -1.0f);					// Top Right Of The Quad (Back)
+	glVertex3f(-1.0f, -1.0f, -1.0f);					// Top Left Of The Quad (Back)
+	glVertex3f(-1.0f, 1.0f, -1.0f);					// Bottom Left Of The Quad (Back)
+	glVertex3f(1.0f, 1.0f, -1.0f);					// Bottom Right Of The Quad (Back)
+
+	glColor3f(0.0f, 0.0f, 1.0f);						// Set The Color To Blue
+	glVertex3f(-1.0f, 1.0f, 1.0f);					// Top Right Of The Quad (Left)
+	glVertex3f(-1.0f, 1.0f, -1.0f);					// Top Left Of The Quad (Left)
+	glVertex3f(-1.0f, -1.0f, -1.0f);					// Bottom Left Of The Quad (Left)
+	glVertex3f(-1.0f, -1.0f, 1.0f);					// Bottom Right Of The Quad (Left)
+
+	glColor3f(1.0f, 0.0f, 1.0f);						// Set The Color To Violet
+	glVertex3f(1.0f, 1.0f, -1.0f);					// Top Right Of The Quad (Right)
+	glVertex3f(1.0f, 1.0f, 1.0f);					// Top Left Of The Quad (Right)
+	glVertex3f(1.0f, -1.0f, 1.0f);					// Bottom Left Of The Quad (Right)
+	glVertex3f(1.0f, -1.0f, -1.0f);					// Bottom Right Of The Quad (Right)
+	glEnd();
+}
+
 void drawScene() {
 
 	//Clear information from last draw
@@ -36,7 +80,7 @@ void drawScene() {
 
 	glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
 	glLoadIdentity(); //Reset the drawing perspective
-
+	drawBox(1, 1, 1);
 
 	glutSwapBuffers(); //Send the 3D scene to the screen
 }
@@ -57,8 +101,6 @@ int main(int argc, char** argv) {
 								  //Create the window
 	glutCreateWindow("String");
 	initRendering(); //Initialize rendering
-
-					 //Set handler functions for drawing, keypresses, and window resizes
 
 	glutDisplayFunc(drawScene);
 	glutKeyboardFunc(handleKeypress);
