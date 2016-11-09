@@ -2,8 +2,20 @@
 #include <stdlib.h>
 #include <GL/glut.h>
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
+#ifndef M_PI
+	#define M_PI 3.141592653589793238463
+#endif
+
+#define NUMBER_OF_SPIRALS 3
+#define NUMBER_OF_SCALES 20
+
 using namespace std;
 
+GLint counter = 0;
+GLfloat scale = 1;
 
 //Called when a key is pressed
 void handleKeypress(unsigned char key, //The key that was pressed
@@ -31,8 +43,7 @@ void handleResize(int w, int h) {
 	gluPerspective(45.0, (double)w / (double)h, 1.0, 200.0);
 }
 
-void drawBox(GLfloat w, GLfloat h, GLfloat d)
-{
+void drawBox(){
 	glTranslatef(0.0f, 10.0f, -30.0f);
 	glBegin(GL_QUADS);									// Draw A Quad
 	glColor3f(0.0f, 1.0f, 0.0f);						// Set The Color To Blue
@@ -71,8 +82,44 @@ void drawBox(GLfloat w, GLfloat h, GLfloat d)
 	glVertex3f(1.0f, -1.0f, 1.0f);					// Bottom Left Of The Quad (Right)
 	glVertex3f(1.0f, -1.0f, -1.0f);					// Bottom Right Of The Quad (Right)
 	glEnd();
+	glTranslatef(0.0f, -10.0f, 30.0f);
+
 }
 
+void drawSphere(GLdouble x_translate, GLdouble y_translate, GLdouble z_translate, GLdouble radius)
+{
+	glPushMatrix();
+		glTranslated(x_translate, y_translate, z_translate);
+		glutSolidSphere(radius, 50, 50);
+	glPopMatrix();
+}
+void drawSpring(){
+	GLfloat t, t_max = 2 * NUMBER_OF_SPIRALS * M_PI, x, y, z;
+	GLfloat x_ball = t_max + M_PI / 2, y_ball, z_ball = sin(t_max + M_PI / 2) / 2;
+	glTranslatef(0.0f, 0.0f, -10.0f);
+	glColor3f(1.0, 1.0, 0.0);
+	glBegin(GL_LINE_STRIP);
+	
+		for (t = M_PI / 2; t <= t_max + M_PI / 2; t += 0.1f)
+		{
+			x = cos(t) / 2;
+			y = -t / 10 * scale;
+			z = sin(t) / 2;
+			y_ball = -(t_max + M_PI / 2) / 10 * scale;
+			//glVertex3f(x, y, z);
+			glPushMatrix();
+				//glTranslatef(0.0, 11.5, -29.0);
+				drawSphere(x, y, z, 0.1);
+				drawSphere(0, y_ball - 0.4, 0, 0.4);
+			glPopMatrix();
+			//cout << x_ball << " " << y_ball << " " << z_ball << endl;
+		}
+	glEnd();
+
+
+
+
+}
 void drawScene() {
 
 	//Clear information from last draw
@@ -80,25 +127,40 @@ void drawScene() {
 
 	glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
 	glLoadIdentity(); //Reset the drawing perspective
-	drawBox(1, 1, 1);
+	drawBox();
+	drawSpring();
 
 	glutSwapBuffers(); //Send the 3D scene to the screen
 }
 
 void update(int value)
 {
-
+	if (counter <= NUMBER_OF_SCALES)
+	{
+		scale += 0.01;
+	}
+	if (counter > NUMBER_OF_SCALES)
+	{
+		scale -= 0.01;
+	}
+	if (counter == 2 * NUMBER_OF_SCALES)
+	{
+		counter = 0;
+	}
+	counter++;
+	//cout << scale << endl;
 	glutPostRedisplay();
-	glutTimerFunc(35, update, 0);
+	glutTimerFunc(25, update, 0);
 }
 
 int main(int argc, char** argv) {
+
 	//Initialize GLUT
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(800, 800); //Set the window size
 
-								  //Create the window
+	//Create the window
 	glutCreateWindow("String");
 	initRendering(); //Initialize rendering
 
