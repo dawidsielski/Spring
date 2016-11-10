@@ -6,7 +6,7 @@
 #include <cmath>
 
 #ifndef M_PI
-	#define M_PI 3.141592653589793238463
+	#define M_PI 3.141592653589793238463f
 #endif
 
 #define NUMBER_OF_SPIRALS 3
@@ -16,11 +16,31 @@ using namespace std;
 
 GLint counter = 0;
 GLfloat scale = 1;
+GLint mouseX, mouseY;
+GLdouble eyeX = 0.0, eyeY = 0.0, eyeZ = 1.0, centerX = 0.0, centerY = 0.0, centerZ = 0.0;
 
 //Called when a key is pressed
 void handleKeypress(unsigned char key, //The key that was pressed
-	int x, int y) {    //The current mouse coordinates
+	GLint oldMouseX, GLint oldMouseY) {    //The current mouse coordinates
 	switch (key) {
+	case 'w':
+		cout << "gora" << endl;
+		eyeY+=0.01;
+		break;
+	case 's':
+		cout << "dol" << endl;
+		eyeY-= 0.01;
+		break;
+	case 'a':
+		cout << "lewo" << endl;
+		eyeX-=0.01;
+		eyeZ-=0.01;
+		break;
+	case 'd':
+		cout << "prawo" << endl;
+		eyeX+= 0.01;
+		eyeZ+= 0.01;
+		break;
 	case 27: //Escape key
 		exit(0); //Exit the program
 	}
@@ -93,32 +113,29 @@ void drawSphere(GLdouble x_translate, GLdouble y_translate, GLdouble z_translate
 		glutSolidSphere(radius, 50, 50);
 	glPopMatrix();
 }
+
+void drawBigSphere(GLdouble x_translate, GLdouble y_translate, GLdouble z_translate, GLdouble radius)
+{
+	glPushMatrix();
+		drawSphere(x_translate, y_translate, z_translate, radius);
+	glPopMatrix();
+}
 void drawSpring(){
 	GLfloat t, t_max = 2 * NUMBER_OF_SPIRALS * M_PI, x, y, z;
 	GLfloat x_ball = t_max + M_PI / 2, y_ball, z_ball = sin(t_max + M_PI / 2) / 2;
 	glTranslatef(0.0f, 0.0f, -10.0f);
 	glColor3f(1.0, 1.0, 0.0);
 	glBegin(GL_LINE_STRIP);
-	
 		for (t = M_PI / 2; t <= t_max + M_PI / 2; t += 0.1f)
 		{
 			x = cos(t) / 2;
 			y = -t / 10 * scale;
 			z = sin(t) / 2;
 			y_ball = -(t_max + M_PI / 2) / 10 * scale;
-			//glVertex3f(x, y, z);
-			glPushMatrix();
-				//glTranslatef(0.0, 11.5, -29.0);
-				drawSphere(x, y, z, 0.1);
-				drawSphere(0, y_ball - 0.4, 0, 0.4);
-			glPopMatrix();
-			//cout << x_ball << " " << y_ball << " " << z_ball << endl;
+			drawSphere(x, y, z, 0.1);
 		}
+		drawBigSphere(0.0, y_ball - 0.4, 0.0, 0.4);
 	glEnd();
-
-
-
-
 }
 void drawScene() {
 
@@ -127,6 +144,8 @@ void drawScene() {
 
 	glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
 	glLoadIdentity(); //Reset the drawing perspective
+	gluLookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, 0.0, 1.0, 1.0);
+	//gluLookAt(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 	drawBox();
 	drawSpring();
 
@@ -137,11 +156,11 @@ void update(int value)
 {
 	if (counter <= NUMBER_OF_SCALES)
 	{
-		scale += 0.01;
+		scale += 0.01f;
 	}
 	if (counter > NUMBER_OF_SCALES)
 	{
-		scale -= 0.01;
+		scale -= 0.01f;
 	}
 	if (counter == 2 * NUMBER_OF_SCALES)
 	{
